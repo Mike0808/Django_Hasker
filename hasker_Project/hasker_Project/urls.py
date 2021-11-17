@@ -27,11 +27,8 @@ urlpatterns = [
                   path('', include('questions.urls', namespace='questions')),
                   path('search/', SearchResultsListView.as_view(),
                        name='search_results'),
-                  # path('accounts/', include('django.contrib.auth.urls')),
                   path('accounts/', include('accounts.urls')),
                   path('accounts/', include('allauth.urls')),
-
-
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

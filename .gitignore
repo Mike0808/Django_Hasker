@@ -1,6 +1,6 @@
-./postgres_data/*
-./hasker_Project/.idea
-./hasker_Project/hasker/__pycache__/
+postgres_data/
+hasker_Project/.idea
+**/__pycache__/
 *.pyc
 hasker_Project/media/avatars/avatar_67NSyIG.png
 hasker_Project/media/avatars/avatar_agftQ8O.png

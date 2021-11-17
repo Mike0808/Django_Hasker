@@ -7,8 +7,7 @@ services:
     build:
       context: ..
       dockerfile: dockerfiles/Dockerfile-django
-    # command: bash -c "python /hasker_Project/manage.py collectstatic --noinput && python /hasker_Project/manage.py migrate && python /hasker_Project/manage.py runserver 0.0.0.0:8000"
-    command: uwsgi --ini /etc/uwsgi.ini
+    command: bash -c "python /hasker_Project/manage.py collectstatic --noinput && python /hasker_Project/manage.py migrate && uwsgi --ini /etc/uwsgi.ini"
     volumes:
       - ../hasker_Project:/hasker_Project
       - sock:/sock  
@@ -16,8 +15,6 @@ services:
       - 8000:8000
     depends_on:
       - db
-    environment:
-      - "DJANGO_SECRET_KEY=django-insecure-kadhi(cb_5a=#9^ewtlh)z!iq7d4bki&%ozdc9izeur40g-s=="
   db:
     restart: always
     container_name: hasker_postgres
