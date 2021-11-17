@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  django:
+    restart: always
+    container_name: hasker_django
+    build:
+      context: ..
+      dockerfile: dockerfiles/Dockerfile-django
+    command: bash -c "python /hasker_Project/manage.py collectstatic --noinput && python /hasker_Project/manage.py migrate && python /hasker_Project/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./hasker_Project:/hasker_Project
+      - sock:/sock  
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+  db:
+    restart: always
+    container_name: hasker_postgres
+    build:
+      context: ..
+      dockerfile: dockerfiles/Dockerfile-postgres
+    volumes:
+      - ../postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5434:5432
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+  nginx:
+    restart: always
+    container_name: hasker_nginx
+    volumes:
+      - ../hasker_Project:/hasker_Project
+      -  sock:/sock
+    build:
+      context: ..
+      dockerfile: dockerfiles/Dockerfile-nginx
+    depends_on:
+      - django
+    ports:
+      - 8080:8080
+volumes:
+  sock:
