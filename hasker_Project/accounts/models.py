@@ -8,25 +8,31 @@ from PIL import Image
 
 
 class CustomAccountManager(BaseUserManager):
-    def create_user(self, email, login, password):
-        user = self.model(email=email, login=login, password=password)
+    def _create_user(self, email, is_staff, is_superuser, password, **extra_fields):
+        if not email:
+            raise ValueError('Users must have an email address')
+        email = self.normalize_email(email)
+        user = self.model(
+            email=email,
+            is_staff=is_staff,
+            is_active=True,
+            is_superuser=is_superuser,
+            password=password,
+            **extra_fields
+        )
         user.set_password(password)
-        user.is_staff = False
-        user.is_superuser = False
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, login, password):
-        user = self.create_user(email=email, login=login, password=password)
-        user.is_active = True
-        user.is_staff = True
-        user.is_superuser = True
+    def create_user(self, email, password, **extra_fields):
+        return self._create_user(email=email, password=password,
+                                 is_staff=False, is_superuser=False, **extra_fields)
+
+    def create_superuser(self, email, password, **extra_fields):
+        user = self._create_user(email=email, password=password,
+                                 is_staff=True, is_superuser=True, **extra_fields)
         user.save(using=self._db)
         return user
-
-    def get_by_natural_key(self, email_):
-        print(email_)
-        return self.get(email=email_)
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
@@ -38,16 +44,19 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField(max_length=150, unique=True)
+    is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     avatar = models.ImageField('account picture', upload_to='avatars',
-                                default="avatars/avatar.png")
+                               default="avatars/avatar.png")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    REQUIRED_FIELDS = ['login']
     USERNAME_FIELD = 'email'
+    EMAIL_FIELD = 'email'
+    REQUIRED_FIELDS = ['login']
 
     objects = CustomAccountManager()
-    disabled = None
-    widget = None
 
     def get_short_name(self):
         return self.email

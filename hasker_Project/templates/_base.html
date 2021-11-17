@@ -50,7 +50,7 @@
                         <li class="nav-item nav-link">
                             <a class="p-2 text-dark" href="{% url 'settings' %}">{{ user.login }}</a>
                             <br>
-                            <a href="{% url 'logout' %}">
+                            <a href="{% url 'account_logout' %}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
                                      class="bi bi-box-arrow-left" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd"
@@ -94,10 +94,10 @@
                               aria-describedby="basic-addon1"></div>
                         </li>
                         <li class="nav-item nav-link">
-                            <a href="/accounts/login/" class="nav-link">Log In</a>
+                            <a href="{% url 'account_login' %}" class="nav-link">Log In</a>
                         </li>
                         <li class="nav-item nav-link">
-                            <a href="/accounts/signup/">
+                            <a href="{% url 'account_signup' %}">
                                 <button class="btn btn-primary btn-sm" type="button" style="height:40px; width:120px;">
                                     Sign Up
                                 </button>

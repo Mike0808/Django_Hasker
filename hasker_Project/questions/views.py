@@ -7,7 +7,10 @@ from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView, TemplateView
 from django.core.paginator import Paginator
 from taggit.models import Tag
+from django.core.mail import send_mail
 
+from accounts.models import CustomUser
+from hasker_Project import settings
 from .forms import QuestionForm, AnswerForm
 from .models import Question, Answer, VoteAnswer, VoteQuestion
 
@@ -16,12 +19,11 @@ class QuestionListView(ListView):
     model = Question
     template_name = 'questions/question_list.html'
     context_object_name = 'question_list'
-    queryset = Question.objects.all().\
+    queryset = Question.objects.all(). \
         annotate(consumption_times=Count('voted')).order_by('-consumption_times', '-created_at')
 
 
 class QuestionActionMixin:
-
     form_class = QuestionForm
 
     @property
@@ -58,16 +60,15 @@ class QuestionDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         form = AnswerForm
         context = super().get_context_data(**kwargs)
-        answers_list = Answer.objects.filter(question_id=self.kwargs.get("pk"))\
+        answers_list = Answer.objects.filter(question_id=self.kwargs.get("pk")) \
             .annotate(consumption_times=Count('voted')).order_by('-consumption_times', '-created_at')
         righ_flag = Answer.objects.filter(question_id=self.kwargs.get("pk"), right_flag=True).count()
         paginator = Paginator(answers_list, 30)
         page = self.request.GET.get('page')
         answers = paginator.get_page(page)
         context['answers'] = answers
-        context['question_list'] = Question.objects.all().\
-        annotate(consumption_times=Count('voted')).order_by('-consumption_times', '-created_at')
-        # context['right_flag_count'] = answers_list['right_flag'].count()
+        context['question_list'] = Question.objects.all(). \
+            annotate(consumption_times=Count('voted')).order_by('-consumption_times', '-created_at')
         context['form'] = form
         return context
 
@@ -116,14 +117,20 @@ class AnswerDeleteView(LoginRequiredMixin, DeleteView):
     action = "Delete"
 
 
-def answer(request):
+def answer_create(request):
     user = request.user
     if request.method == "POST":
         answer_text = request.POST.get('answer_text')
         question_id = request.POST.get('question_id')
         questions_list = Question.objects.get(id=question_id)
+        customuser = CustomUser.objects.get(email=questions_list.author)
+        email = questions_list.author
+        login = customuser.login
         _answer, created = Answer.objects.get_or_create(question=questions_list, answer_text=answer_text, author=user)
         _answer.save()
+        send_mail('Hasker. New answer', "Hello "
+                  + login + " you have new answer for your question with title: "
+                  + questions_list.title, settings.DEFAULT_FROM_EMAIL, [email])
     return redirect('questions:question_list')
 
 

@@ -4,11 +4,10 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.contrib.postgres.fields import ArrayField
 
 from taggit.managers import TaggableManager
 from taggit.models import GenericUUIDTaggedItemBase, TaggedItemBase, TagBase, Tag
-from django.utils.translation import ugettext_lazy as _, pgettext_lazy
+from django.utils.translation import ugettext_lazy as _
 
 # Create your models here.
 from unidecode import unidecode
@@ -51,10 +50,6 @@ class Question(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
-
-    #
-    # def was_updated_recently(self):
-    #     return timezone.now() - self.updated_at
 
     def __str__(self):
         return str(self.title)

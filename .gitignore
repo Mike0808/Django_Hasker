@@ -1,1 +1,14 @@
 ./postgres_data/*
+./hasker_Project/.idea
+./hasker_Project/hasker/__pycache__/
+*.pyc
+hasker_Project/media/avatars/avatar_67NSyIG.png
+hasker_Project/media/avatars/avatar_agftQ8O.png
+hasker_Project/media/avatars/avatar_hdZbLnO.png
+hasker_Project/media/avatars/avatar_QfFe6NJ.png
+hasker_Project/media/avatars/card.jpg
+hasker_Project/media/avatars/DSC03424.JPG
+hasker_Project/media/avatars/image_2_mZwnf0k.jpg
+hasker_Project/media/avatars/image_2.jpg
+hasker_Project/media/avatars/shutterstock_1179758536-1000x500.jpg
+hasker_Project/media/avatars/sid.jpg
